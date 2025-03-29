@@ -1,6 +1,8 @@
 import React from 'react'
-import Dither from "./Dither.jsx";
+import Dither from "./components/Dither.jsx";
 import './index.css'
+import Navbar from "./components/Navbar.js";
+import InfiniteMarquee from "./components/InfiniteMarquee.jsx";
 
 export default function App() {
   return (
@@ -18,18 +20,13 @@ export default function App() {
       {/*main container*/}
       <div className={`absolute w-full h-full`}>
         {/*Nav*/}
-        <nav className={`flex justify-between absolute justify-center w-full h-[4rem] bg-black/30 backdrop-blur`}>
-          {/*  logo*/}
-            <img src="/vass.png" alt="vass logo" className='h-[100%]'/>
-          {/*  nav items*/}
-        </nav>
-        <div className={`w-full h-full flex justify-center items-center`}>
-          <div className={`text-white text-4xl`}>
-            <h1 className={`text-4xl`}>Dither</h1>
-            <p className={`text-2xl`}>A simple dithering effect</p>
-          </div>
+        <div className={''}>
+         <Navbar />
+          <InfiniteMarquee />
         </div>
       </div>
+      {/* announcement banner */}
+
     </div>
   )
 }
