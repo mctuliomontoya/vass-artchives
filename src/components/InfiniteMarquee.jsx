@@ -1,18 +1,50 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import { Observer } from 'gsap/Observer';
+import "./marquee.css"
 
 export default function InfiniteMarquee() {
-  const railRef = useRef(null); // Create a ref for the rail
 
   useEffect(() => {
-    const loop = horizontalLoop(".marquee__item", {
+    gsap.registerPlugin(Observer);
+
+    const scrollingText = gsap.utils.toArray('.rail h4');
+
+    const tl = horizontalLoop(scrollingText, {
       repeat: -1,
-      paused: false,
-      speed: 5
+      paddingRight: 30,
     });
 
+    Observer.create({
+      onChangeY(self) {
+        let factor = 2.5;
+        if (self.deltaY < 0) {
+          factor *= -1;
+        }
+        gsap.timeline({
+          defaults: {
+            ease: "none",
+          }
+        })
+          .to(tl, { timeScale: factor * 2.5, duration: 0.2, overwrite: true, })
+          .to(tl, { timeScale: factor / 2.5, duration: 1 }, "+=0.3");
+      }
+    });
 
+    /*
+    This helper function makes a group of elements animate along the x-axis in a seamless, responsive loop.
+
+    Features:
+     - Uses xPercent so that even if the widths change (like if the window gets resized), it should still work in most cases.
+     - When each item animates to the left or right enough, it will loop back to the other side
+     - Optionally pass in a config object with values like "speed" (default: 1, which travels at roughly 100 pixels per second), paused (boolean),  repeat, reversed, and paddingRight.
+     - The returned timeline will have the following methods added to it:
+       - next() - animates to the next element using a timeline.tweenTo() which it returns. You can pass in a vars object to control duration, easing, etc.
+       - previous() - animates to the previous element using a timeline.tweenTo() which it returns. You can pass in a vars object to control duration, easing, etc.
+       - toIndex() - pass in a zero-based index value of the element that it should animate to, and optionally pass in a vars object to control duration, easing, etc. Always goes in the shortest direction
+       - current() - returns the current index (if an animation is in-progress, it reflects the final index)
+       - times - an Array of the times on the timeline where each element hits the "starting" spot. There's also a label added accordingly, so "label1" is when the 2nd element reaches the start.
+     */
     function horizontalLoop(items, config) {
       items = gsap.utils.toArray(items);
       config = config || {};
@@ -23,7 +55,7 @@ export default function InfiniteMarquee() {
         widths = [],
         xPercents = [],
         curIndex = 0,
-        pixelsPerSecond = (config.speed || 1) * 10,
+        pixelsPerSecond = (config.speed || 1) * 100,
         snap = config.snap === false ? v => v : gsap.utils.snap(config.snap || 1), // some browsers shift by a pixel to accommodate flex layouts, so for example if width is 20% the first element's width might be 242px, and the next 243px, alternating back and forth. So we snap to 5 percentage points to make things look more natural
         totalWidth, curX, distanceToStart, distanceToLoop, item, i;
       gsap.set(items, { // convert "x" to "xPercent" to make things responsive, and populate the widths/xPercents Arrays to make lookups faster.
@@ -73,30 +105,20 @@ export default function InfiniteMarquee() {
   }, []);
 
   return (
-    <div className="mb-8 relative h-8 bg-black items-center flex mt-1">
-      <div className="flex flex-nowrap whitespace-nowrap flex-row gap-32 ">
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
-        <p
-          className="text-white text-xl font-family-sans tracking-widest uppercase leading-none  marquee__item">coming soon.</p>
+    <div className="scrolling-text">
+      <div className="rail bg-black py-2">
+        <h4 className={'text-lg text-white tracking-widest'}> Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}> Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
+        <h4 className={'text-lg text-white tracking-widest'}>Coming Soon...</h4>
       </div>
     </div>
   );
